@@ -1,30 +1,37 @@
+# 🐊 Gator CLI – RSS Feed Aggregator
 
-# 🐊 Gator CLI
+<div align="center">
 
-Gator is a command-line RSS feed aggregator that lets you follow feeds, fetch posts, and browse them—all from your terminal. It’s perfect for developers and power users who want to track multiple feeds efficiently without leaving the CLI.
+**Your terminal's personal RSS newsroom**  
+Follow, fetch, and browse feeds – all without leaving the command line.
 
----
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-8A2BE2?style=for-the-badge&logo=postgresql&logoColor=white)](https://orm.drizzle.team)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## Features
+**Multi-user • Continuous background fetching • CLI-first • Boot.dev certified**
 
-* Follow any RSS feed by URL.
-* Store feeds in a database with user-specific following.
-* Aggregate posts from all followed feeds.
-* Browse recent posts from the feeds you follow.
-* Continuous background fetching with configurable intervals.
-* Handles multiple users with a many-to-many feed-follow system.
-
----
-
-## Requirements
-
-* Node.js >= 20
-* PostgreSQL >= 14
-* npm (or yarn)
+</div>
 
 ---
 
-## Installation
+## ✨ Features
+
+- 👥 **Multi-user support** – Each user has their own feed following
+- 📡 **Follow any RSS feed** – Just paste the URL
+- 🔄 **Continuous background aggregation** – Configurable fetch intervals
+- 📚 **Browse recent posts** – See what's new from feeds you follow
+- 🗄️ **PostgreSQL + Drizzle ORM** – Type-safe database operations
+- 🎯 **Many-to-many feed-follow system** – Users can share feeds, follow independently
+- ⏱️ **Safe fetching** – Respects server load with configurable delays
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone & install
 
 ```bash
 git clone https://github.com/JanaDroubi/gator.git
@@ -32,32 +39,28 @@ cd gator
 npm install
 ```
 
----
-
-## Database Setup
-
-1. Start PostgreSQL locally.
-2. Create a database called `gator`:
+### 2. Setup PostgreSQL
 
 ```bash
+# Start PostgreSQL locally
 psql -U postgres
+
+# Create database
 CREATE DATABASE gator;
-\q
-```
 
-3. Ensure `pgcrypto` extension is installed for UUID generation:
+# Connect to it
+\c gator
 
-```bash
-psql -U postgres -d gator
+# Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+# Exit
 \q
 ```
 
----
+### 3. Configure
 
-## Configuration
-
-Create a `config.json` in the root directory:
+Create `config.json` in the root:
 
 ```json
 {
@@ -65,90 +68,176 @@ Create a `config.json` in the root directory:
 }
 ```
 
----
-
-## CLI Usage
-
-### Reset the database
+### 4. Initialize database
 
 ```bash
+npm run db:generate
+npm run db:migrate
+```
+
+---
+
+## 📖 CLI Commands
+
+### 🔄 Database management
+```bash
+# Reset everything (users, feeds, posts)
 npx tsx src/index.ts reset
 ```
 
-### Register a user
-
+### 👤 User management
 ```bash
-npx tsx src/index.ts register <username>
+# Register a new user
+npx tsx src/index.ts register jana
+
+# List users (coming soon)
 ```
 
-### Add a feed
-
+### 📰 Feed management
 ```bash
-npx tsx src/index.ts addfeed "Feed Name" "https://example.com/rss"
-```
+# Add a new feed (auto-follows for current user)
+npx tsx src/index.ts addfeed "TechCrunch" "https://techcrunch.com/feed/"
 
-Automatically follows the feed for the user adding it.
+# Follow an existing feed
+npx tsx src/index.ts follow "https://techcrunch.com/feed/"
 
-### Follow an existing feed
-
-```bash
-npx tsx src/index.ts follow "https://example.com/rss"
-```
-
-### See feeds you follow
-
-```bash
+# See all feeds you follow
 npx tsx src/index.ts following
+
+# Unfollow a feed (coming soon)
 ```
 
-### Aggregate posts from feeds (continuous loop)
-
+### 🔁 Aggregation
 ```bash
-npx tsx src/index.ts agg 1m
+# Fetch posts every 5 minutes
+npx tsx src/index.ts agg 5m
+
+# Fetch every 30 seconds
+npx tsx src/index.ts agg 30s
+
+# Fetch once (coming soon)
 ```
 
-* Fetches posts from your followed feeds every `1m` (1 minute).
-* Supports durations like `1s`, `5m`, `1h`.
-* Stop with `Ctrl+C`.
+Press `Ctrl+C` to stop the aggregator.
 
-### Browse recent posts
-
+### 📖 Browsing
 ```bash
+# Show 5 most recent posts
 npx tsx src/index.ts browse 5
+
+# Show 10 most recent posts
+npx tsx src/index.ts browse 10
+
+# Default: 2 posts
+npx tsx src/index.ts browse
 ```
 
-* Shows the latest 5 posts (default: 2) from feeds you follow.
+---
+
+## 🧪 Recommended Feeds for Testing
+
+| Feed | URL |
+|------|-----|
+| **TechCrunch** | `https://techcrunch.com/feed/` |
+| **Hacker News** | `https://news.ycombinator.com/rss` |
+| **Boot.dev Blog** | `https://blog.boot.dev/index.xml` |
+| **Ars Technica** | `https://feeds.arstechnica.com/arstechnica/index` |
+| **Smashing Magazine** | `https://www.smashingmagazine.com/feed/` |
 
 ---
 
-## Recommended Feeds for Testing
+## 📦 Tech Stack
 
-* TechCrunch: `https://techcrunch.com/feed/`
-* Hacker News: `https://news.ycombinator.com/rss`
-* Boot.dev Blog: `https://blog.boot.dev/index.xml`
-
----
-
-## Development
-
-* Tables are managed with Drizzle ORM.
-* Feed follows are stored in a many-to-many relationship for multi-user support.
-* Posts are stored in the `posts` table with published timestamps.
-* Aggregator runs in a safe loop to avoid overloading servers.
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Runtime | Node.js 20+ | JavaScript runtime |
+| Language | TypeScript 5 | Type safety |
+| CLI | Commander (optional) | Command parsing |
+| Database | PostgreSQL 14+ | Persistent storage |
+| ORM | Drizzle ORM | Type-safe queries |
+| RSS Parser | `rss-parser` | Feed fetching |
+| Migration | Drizzle Kit | Schema versioning |
 
 ---
 
-## Contributing
+## 📁 Project Structure
 
-1. Fork the repo.
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m "Add my feature"`
-4. Push to branch: `git push origin feature/my-feature`
+```
+gator/
+├── src/
+│   ├── index.ts           # CLI entry point
+│   ├── commands/          # Command implementations
+│   │   ├── register.ts
+│   │   ├── addfeed.ts
+│   │   ├── follow.ts
+│   │   ├── following.ts
+│   │   ├── agg.ts
+│   │   ├── browse.ts
+│   │   └── reset.ts
+│   ├── db/                # Database layer
+│   │   ├── schema.ts      # Drizzle schema
+│   │   └── client.ts      # DB connection
+│   ├── models/             # Business logic
+│   │   ├── user.ts
+│   │   ├── feed.ts
+│   │   └── post.ts
+│   ├── rss/               # RSS fetching
+│   │   └── parser.ts
+│   └── utils/             # Helpers
+│       ├── config.ts
+│       └── time.ts
+├── migrations/            # Drizzle migrations
+├── config.json            # User config
+├── drizzle.config.ts      # Drizzle config
+├── package.json
+└── README.md
+```
+
+---
+
+## 🔧 Development
+
+```bash
+# Run in dev mode with hot reload
+npm run dev
+
+# Generate migrations (after schema changes)
+npm run db:generate
+
+# Apply migrations
+npm run db:migrate
+
+# Build for production
+npm run build
+
+# Run production build
+npm run start
+```
+
+
+
+---
+
+## 📝 Environment Variables / Config
+
+| Key | Required | Description | Example |
+|-----|----------|-------------|---------|
+| `dbUrl` | ✅ | PostgreSQL connection string | `postgres://postgres:postgres@localhost:5432/gator?sslmode=disable` |
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
 ---
 
-## License
+## 📜 License
 
 MIT © [Jana Droubi](https://github.com/JanaDroubi)
 
+---
